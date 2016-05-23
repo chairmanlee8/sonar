@@ -1,6 +1,6 @@
 # Sonar
 
-**TODO: Add description**
+Elixir interface to AWS.
 
 ## Installation
 
@@ -18,3 +18,6 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
           [applications: [:sonar]]
         end
 
+## Developers, Developers, Developers, Developers
+
+This library is an Elixir interface to the HTTP/RESTish API exposed for AWS (see http://docs.aws.amazon.com/general/latest). It's designed to be easily updated as the API updates, mimicking the method used in boto3.
