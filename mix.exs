@@ -14,7 +14,7 @@ defmodule Sonar.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :crypto]]
+    [applications: [:logger, :crypto, :httpotion]]
   end
 
   # Dependencies can be Hex packages:
@@ -29,7 +29,7 @@ defmodule Sonar.Mixfile do
   defp deps do
     [
         {:poison, "~> 2.0"},
-        {:httpoison, "~> 0.8"}
+        {:httpotion, "~> 2.2"}
     ]
   end
 end

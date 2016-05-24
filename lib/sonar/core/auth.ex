@@ -6,6 +6,7 @@ defmodule Sonar.Core.Auth do
     we are only using AWS Signature v4 this singular file should be sufficient.
 
     """
+    alias Sonar.Utils
     alias Sonar.Utils.Amazon
 
     def make_request(aws_access_key, aws_secret_key, region, service, method, url, body \\ "", headers \\ []) do
@@ -13,7 +14,7 @@ defmodule Sonar.Core.Auth do
         # Generate canonical request string
 
         %URI{path: path, query: query} = URI.parse(url)
-        qs = query |> URI.query_decoder |> Enum.map(&(&1)) |> Enum.sort_by(&(&1))
+        qs = (query || "") |> URI.query_decoder |> Enum.map(&(&1)) |> Enum.sort_by(&(&1))
 
         # TODO: does not handle multiple header consolidation!!
         chs = headers
@@ -22,7 +23,7 @@ defmodule Sonar.Core.Auth do
             |> Enum.map(fn {name, value} -> "#{name}:#{value}" end)
 
         shs = headers
-            |> Enum.map(&(&1))
+            |> Enum.map(fn {a, _} -> a end)
             |> Enum.map(&String.downcase/1)
             |> Enum.sort
             |> Enum.join(";")
@@ -30,12 +31,14 @@ defmodule Sonar.Core.Auth do
         hash = :crypto.hash(:sha256, body)
             |> Base.encode16(case: :lower)
 
-        canonical = "#{method}\n" +
-            "#{URI.encode(path)}\n" +
-            "#{qs |> Enum.map(fn {k, v} -> "#{k}=#{v}" end) |> URI.encode |> Enum.join("&")}\n" +
-            "#{Enum.join(chs, "\n")}\n" +
-            "#{shs}\n" +
-            "#{hash}\n"
+        canonical = Enum.join([
+            "#{method}\n",
+            "#{URI.encode(path)}\n",
+            "#{qs |> Enum.map(fn {k, v} -> URI.encode("#{k}=#{v}") end) |> Enum.join("&")}\n",
+            "#{Enum.join(chs, "\n")}\n\n",
+            "#{shs}\n",
+            "#{hash}"
+        ])
 
         canonical_hash = :crypto.hash(:sha256, canonical)
             |> Base.encode16(case: :lower)
@@ -48,10 +51,12 @@ defmodule Sonar.Core.Auth do
 
         credential_scope = "#{iso_date_head}/#{region}/#{service}/aws4_request"
 
-        signing_string = "AWS4-HMAC-SHA256\n" +
-            "#{Amazon.iso_date}\n" +
-            "#{credential_scope}\n" +
+        signing_string = Enum.join([
+            "AWS4-HMAC-SHA256\n",
+            "#{Amazon.iso_date}\n",
+            "#{credential_scope}\n",
             "#{canonical_hash}"
+        ])
 
         # Step 3
         # Calculate the AWS v4 signature
@@ -62,7 +67,8 @@ defmodule Sonar.Core.Auth do
         k_service = :crypto.hmac(:sha256, k_region, service)
         k_signing = :crypto.hmac(:sha256, k_service, "aws4_request")
 
-        signature = k_signing |> Base.encode16(case: :lower)
+        signature = :crypto.hmac(:sha256, k_signing, signing_string)
+            |> Base.encode16(case: :lower)
 
         # Step 4+
         # Make the request
@@ -72,7 +78,15 @@ defmodule Sonar.Core.Auth do
             "AWS4-HMAC-SHA256 Credential=#{aws_access_key}/#{credential_scope}, SignedHeaders=#{shs}, Signature=#{signature}"
         }
 
-        HTTPoison.request(atomize_method(method), url, body, [authorize | headers])
+        # Convert to HTTPotion headers format
+        final_headers = [authorize | headers]
+            |> Enum.into([])
+
+        IO.inspect atomize_method(method)
+        IO.inspect url
+        IO.inspect body
+        IO.inspect final_headers
+        HTTPotion.request(atomize_method(method), url, [body: body, headers: final_headers])
     end
 
     defp atomize_method(method) do
