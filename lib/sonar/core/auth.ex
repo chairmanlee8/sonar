@@ -82,10 +82,6 @@ defmodule Sonar.Core.Auth do
         final_headers = [authorize | headers]
             |> Enum.into([])
 
-        IO.inspect atomize_method(method)
-        IO.inspect url
-        IO.inspect body
-        IO.inspect final_headers
         HTTPotion.request(atomize_method(method), url, [body: body, headers: final_headers])
     end
 
