@@ -39,6 +39,7 @@ defmodule Sonar.API.Get.XML do
                         ]
                     )
 
+                    # TODO: parse XML
                     rbody
                 end
             end
