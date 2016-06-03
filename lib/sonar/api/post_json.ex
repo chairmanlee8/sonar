@@ -26,16 +26,17 @@ defmodule Sonar.API.Post.JSON do
                         |> Poison.encode!
 
                     {short_api, long_api} = @api_service
+                    host = @override_host || "#{short_api}.#{@default_aws_region}.amazonaws.com"
 
                     %HTTPotion.Response{body: rbody} = Core.Auth.make_request(
                         auth[:aws_access_key],
                         auth[:aws_secret_key],
                         auth[:aws_region] || @default_aws_region,
                         short_api,
-                        "POST", "https://#{short_api}.#{@default_aws_region}.amazonaws.com/",
+                        "POST", "https://#{host}/",
                         body,
                         [
-                            {"Host", "#{short_api}.#{@default_aws_region}.amazonaws.com"},
+                            {"Host", "#{host}"},
                             {"Accept-Encoding", "identity"},
                             {"Content-Length", String.length(body) |> Integer.to_string},
                             {"X-Amz-Target", "#{long_api}V#{@api_version}.#{unquote(method)}"},

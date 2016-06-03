@@ -34,7 +34,7 @@ defmodule Sonar.Core.Auth do
         canonical = Enum.join([
             "#{method}\n",
             "#{URI.encode(path)}\n",
-            "#{qs |> Enum.map(fn {k, v} -> URI.encode("#{k}=#{v}") end) |> Enum.join("&")}\n",
+            "#{qs |> Enum.map(fn {k, v} -> "#{k}=#{v |> URI.encode_www_form}" end) |> Enum.join("&")}\n",
             "#{Enum.join(chs, "\n")}\n\n",
             "#{shs}\n",
             "#{hash}"
@@ -82,7 +82,7 @@ defmodule Sonar.Core.Auth do
         final_headers = [authorize | headers]
             |> Enum.into([])
 
-        HTTPotion.request(atomize_method(method), url, [body: body, headers: final_headers])
+        HTTPotion.request(atomize_method(method), url |> URI.encode, [body: body, headers: final_headers])
     end
 
     defp atomize_method(method) do

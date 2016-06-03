@@ -22,8 +22,9 @@ defmodule Sonar.API.Get.XML do
 
                 def unquote(name)(auth, params \\ []) do
                     {short_api, long_api} = @api_service
-                    premix = [version: @api_version, action: unquote(method)]
+                    host = @override_host || "#{short_api}.#{@default_aws_region}.amazonaws.com"
 
+                    premix = [version: @api_version, action: unquote(method)]
                     qs = (premix ++ params) |> Utils.API.generate_parameter_qs
 
                     %HTTPotion.Response{body: rbody} = Core.Auth.make_request(
@@ -31,9 +32,9 @@ defmodule Sonar.API.Get.XML do
                         auth[:aws_secret_key],
                         auth[:aws_region] || @default_aws_region,
                         short_api,
-                        "GET", "https://#{short_api}.#{@default_aws_region}.amazonaws.com/?#{qs}", "",
+                        "GET", "https://#{host}/?#{qs}", "",
                         [
-                            {"Host", "#{short_api}.#{@default_aws_region}.amazonaws.com"},
+                            {"Host", "#{host}"},
                             {"X-Amz-Date", Amazon.iso_date},
                             {"Content-Type", "application/x-www-form-urlencoded; charset=utf-8"}
                         ]
