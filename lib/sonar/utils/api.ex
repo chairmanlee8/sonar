@@ -17,4 +17,10 @@ defmodule Sonar.Utils.API do
             end
         ) |> Enum.into(%{})
     end
+
+    def generate_parameter_qs(params) do
+        params
+            |> Enum.map(fn {k, v} -> "#{k |> Atom.to_string |> Mix.Utils.camelize |> URI.encode}=#{v |> URI.encode}" end)
+            |> Enum.join("&")
+    end
 end

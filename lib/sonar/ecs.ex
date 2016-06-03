@@ -36,5 +36,5 @@ defmodule Sonar.ECS do
         "UpdateService"
     ]
 
-    use Sonar.Core.API
+    use Sonar.API.Post.JSON
 end

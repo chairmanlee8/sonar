@@ -1,4 +1,4 @@
-defmodule Sonar.Core.API do
+defmodule Sonar.API.Post.JSON do
     @moduledoc ~S"""
     This module allows you to automatically generate an API for any AWS service through the `using` macro. In your host
     module, simply define the following module attributes:
@@ -7,7 +7,7 @@ defmodule Sonar.Core.API do
         @api_service -- API service name tuple {short_name, long_name} (e.g. {"ecs", "AmazonEC2ContainerService"} for Amazon ECS)
         @api_methods -- array of API method names to generate
 
-    Then invoke the using macro via `use Sonar.Core.API` and your module will populate with the proper function stubs.
+    Then invoke the using macro via `use Sonar.Core.API.Post` and your module will populate with the proper function stubs.
 
     """
 
