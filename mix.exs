@@ -29,7 +29,8 @@ defmodule Sonar.Mixfile do
   defp deps do
     [
         {:poison, "~> 1.1"},
-        {:httpotion, "~> 2.2"}
+        {:httpotion, "~> 2.2"},
+        {:erlsom, "~> 1.4"}
     ]
   end
 end

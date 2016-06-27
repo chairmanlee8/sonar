@@ -24,6 +24,7 @@ defmodule Sonar.API.Get.XML do
                     {short_api, long_api} = @api_service
                     host = @override_host || "#{short_api}.#{client[:region]}.amazonaws.com"
 
+                    iso_date = Amazon.iso_date
                     premix = [version: @api_version, action: unquote(method)]
                     qs = (premix ++ params) |> Utils.API.generate_parameter_qs
 
@@ -32,16 +33,17 @@ defmodule Sonar.API.Get.XML do
                         client[:secret_access_key],
                         client[:region],
                         short_api,
-                        "GET", "https://#{host}/?#{qs}", "",
+                        "GET", "https://#{host}/?#{qs}", iso_date, "",
                         [
                             {"Host", "#{host}"},
-                            {"X-Amz-Date", Amazon.iso_date},
+                            {"X-Amz-Date", iso_date},
                             {"Content-Type", "application/x-www-form-urlencoded; charset=utf-8"}
                         ]
                     )
 
-                    # TODO: parse XML
-                    rbody
+                    # Parse XML
+                    {:ok, xmltree, _} = :erlsom.simple_form(rbody, nameFun: fn name, _, _ -> name end)
+                    Utils.API.xml_transform(xmltree)
                 end
             end
         end

@@ -27,6 +27,7 @@ defmodule Sonar.API.Post.JSON do
 
                     {short_api, long_api} = @api_service
                     host = @override_host || "#{short_api}.#{client[:region]}.amazonaws.com"
+                    iso_date = Amazon.iso_date
 
                     %HTTPotion.Response{body: rbody} = Core.Auth.make_request(
                         client[:access_key_id],
@@ -34,13 +35,14 @@ defmodule Sonar.API.Post.JSON do
                         client[:region],
                         short_api,
                         "POST", "https://#{host}/",
+                        iso_date,
                         body,
                         [
                             {"Host", "#{host}"},
                             {"Accept-Encoding", "identity"},
                             {"Content-Length", String.length(body) |> Integer.to_string},
                             {"X-Amz-Target", "#{long_api}V#{@api_version}.#{unquote(method)}"},
-                            {"X-Amz-Date", Amazon.iso_date},
+                            {"X-Amz-Date", iso_date},
                             {"Content-Type", "application/x-amz-json-1.1"}
                         ]
                     )

@@ -9,7 +9,7 @@ defmodule Sonar.Core.Auth do
     alias Sonar.Utils
     alias Sonar.Utils.Amazon
 
-    def make_request(aws_access_key, aws_secret_key, region, service, method, url, body \\ "", headers \\ []) do
+    def make_request(aws_access_key, aws_secret_key, region, service, method, url, iso_date, body \\ "", headers \\ []) do
         # Step 1: http://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
         # Generate canonical request string
 
@@ -40,23 +40,25 @@ defmodule Sonar.Core.Auth do
             "#{hash}"
         ])
 
+        IO.puts canonical
+        IO.puts "----"
+
         canonical_hash = :crypto.hash(:sha256, canonical)
             |> Base.encode16(case: :lower)
 
         # Step 2
         # Create string to sign
 
-        iso_date = Amazon.iso_date
         iso_date_head = iso_date |> String.split("T") |> Enum.at(0)
-
         credential_scope = "#{iso_date_head}/#{region}/#{service}/aws4_request"
-
         signing_string = Enum.join([
             "AWS4-HMAC-SHA256\n",
-            "#{Amazon.iso_date}\n",
+            "#{iso_date}\n",
             "#{credential_scope}\n",
             "#{canonical_hash}"
         ])
+
+        IO.puts signing_string
 
         # Step 3
         # Calculate the AWS v4 signature
@@ -81,6 +83,11 @@ defmodule Sonar.Core.Auth do
         # Convert to HTTPotion headers format
         final_headers = [authorize | headers]
             |> Enum.into([])
+
+        IO.inspect final_headers
+        IO.inspect "---"
+        IO.inspect body
+        IO.inspect url
 
         HTTPotion.request(atomize_method(method), url |> URI.encode, [body: body, headers: final_headers])
     end
