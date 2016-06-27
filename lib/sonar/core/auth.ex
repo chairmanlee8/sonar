@@ -40,9 +40,6 @@ defmodule Sonar.Core.Auth do
             "#{hash}"
         ])
 
-        IO.puts canonical
-        IO.puts "----"
-
         canonical_hash = :crypto.hash(:sha256, canonical)
             |> Base.encode16(case: :lower)
 
@@ -57,8 +54,6 @@ defmodule Sonar.Core.Auth do
             "#{credential_scope}\n",
             "#{canonical_hash}"
         ])
-
-        IO.puts signing_string
 
         # Step 3
         # Calculate the AWS v4 signature
@@ -83,11 +78,6 @@ defmodule Sonar.Core.Auth do
         # Convert to HTTPotion headers format
         final_headers = [authorize | headers]
             |> Enum.into([])
-
-        IO.inspect final_headers
-        IO.inspect "---"
-        IO.inspect body
-        IO.inspect url
 
         HTTPotion.request(atomize_method(method), url |> URI.encode, [body: body, headers: final_headers])
     end
