@@ -3,7 +3,7 @@ defmodule Sonar.Mixfile do
 
   def project do
     [app: :sonar,
-     version: "0.0.1",
+     version: "0.0.2",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -14,7 +14,7 @@ defmodule Sonar.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :crypto, :httpotion]]
+    [applications: [:logger, :crypto, :httpotion, :erlsom]]
   end
 
   # Dependencies can be Hex packages:
