@@ -18,7 +18,7 @@ defmodule Sonar.API.Post.JSON do
             alias Sonar.Utils.Amazon
 
             for method <- @api_methods do
-                name = method |> Mix.Utils.underscore |> String.to_atom
+                name = method |> Macro.underscore |> String.to_atom
 
                 def unquote(name)(client, params \\ []) do
                     body = params

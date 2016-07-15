@@ -37,15 +37,15 @@ defmodule Sonar.Utils.API do
 
     def generate_parameter_qs(params) do
         params
-            |> Enum.map(fn {k, v} -> "#{k |> Atom.to_string |> Mix.Utils.camelize |> URI.encode}=#{v |> URI.encode |> String.replace("+", "%2B")}" end)
+            |> Enum.map(fn {k, v} -> "#{k |> Atom.to_string |> Macro.camelize |> URI.encode}=#{v |> URI.encode |> String.replace("+", "%2B")}" end)
             |> Enum.join("&")
     end
 
     def xml_transform({tag, _, [c | cs]}) do
         if length(cs) == 0 do
-            {Mix.Utils.underscore(to_string(tag)), xml_transform(c)}
+            {Macro.underscore(to_string(tag)), xml_transform(c)}
         else
-            {Mix.Utils.underscore(to_string(tag)), [c | cs] |> Enum.map(&xml_transform/1)}
+            {Macro.underscore(to_string(tag)), [c | cs] |> Enum.map(&xml_transform/1)}
         end
     end
     def xml_transform(c), do: c
