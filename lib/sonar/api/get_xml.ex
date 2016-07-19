@@ -44,6 +44,9 @@ defmodule Sonar.API.Get.XML do
                     # Parse XML
                     {:ok, xmltree, _} = :erlsom.simple_form(rbody, nameFun: fn name, _, _ -> name end)
                     Utils.API.xml_transform(xmltree)
+                rescue
+                    # TODO: return more useful error
+                    _e -> :error
                 end
             end
         end

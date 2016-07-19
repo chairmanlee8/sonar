@@ -48,6 +48,9 @@ defmodule Sonar.API.Post.JSON do
                     )
 
                     rbody |> Poison.Parser.parse!
+                rescue
+                    # TODO: return more useful error
+                    _e -> :error
                 end
             end
         end
