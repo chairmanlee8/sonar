@@ -4,6 +4,7 @@ defmodule Sonar.SQS do
 
     """
     @default_aws_region "us-east-1"
+    @override_host false
 
     @api_service {"sqs", nil}
     @api_version "2012-11-05"

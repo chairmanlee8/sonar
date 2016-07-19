@@ -4,6 +4,7 @@ defmodule Sonar.EC2 do
 
     """
     @default_aws_region "us-east-1"
+    @override_host false
 
     @api_service {"ec2", nil}
     @api_version "2015-10-01"

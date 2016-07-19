@@ -6,7 +6,6 @@ defmodule Sonar.Core.Auth do
     we are only using AWS Signature v4 this singular file should be sufficient.
 
     """
-    alias Sonar.Utils
     alias Sonar.Utils.Amazon
 
     def make_request(aws_access_key, aws_secret_key, region, service, method, url, iso_date, body \\ "", headers \\ []) do

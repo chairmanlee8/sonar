@@ -4,6 +4,7 @@ defmodule Sonar.ECS do
 
     """
     @default_aws_region "us-east-1"
+    @override_host false
 
     @api_service {"ecs", "AmazonEC2ContainerService"}
     @api_version "20141113"
